@@ -1,0 +1,7 @@
+# ~/.inputrc
+# case insensitive tab completion:
+set completion-ignore-case on
+# https://stackoverflow.com/questions/42192384/show-all-if-ambiguous-vs-show-all-if-unmodified
+# I've played around with these a bit but can't tell a difference.
+#set show-all-if-ambiguous on
+set show-all-if-unmodified on
