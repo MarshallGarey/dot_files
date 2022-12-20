@@ -173,6 +173,20 @@ cd .
 # Hook direnv to bash
 eval "$(direnv hook bash)"
 
+function run_slurmrestd()
+{
+        if test -f "slurmrestd"; then
+                echo "running slurmrestd:"
+                set -x
+                export SLURMRESTD_SECURITY=disable_user_check
+                export SLURM_JWT=1
+                ./slurmrestd :8080 -vv $@
+        else
+                echo "no slurmrestd in current directory"
+                return -1
+        fi
+}
+
 # This is a function instead of an alias because I want to get fancier with it
 # like allow passing args to make.py but have make.py not be the last thing
 # that this does. Here is the old alias:
