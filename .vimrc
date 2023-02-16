@@ -3,6 +3,10 @@ execute pathogen#infect()
 "Auto-detect filetype.
 filetype plugin indent on
 
+" Set clipboard equal to the system clipboard so that I can use the + register
+" to yank to the system clipboard
+set clipboard=unnamedplus
+
 "Highlighted serach - highlights
 set hlsearch
 
