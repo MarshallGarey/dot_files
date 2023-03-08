@@ -173,6 +173,47 @@ cd .
 # Hook direnv to bash
 eval "$(direnv hook bash)"
 
+function rest()
+{
+	usage="Usage: rest request url [data_file] where \"request\" = GET, POST, etc."
+	if [ $# -lt 2 ]
+	then
+		echo $usage
+		return 1
+	elif [ $# -eq 3 ]
+	then
+		data_file=$3
+	fi
+
+	request=$1
+	url=$2
+	if [ -z "${request}" ] || [ -z "${url}" ]
+	then
+		echo $usage
+		return 1
+	fi
+
+	if [ -z ${data_file} ]
+	then
+		data=""
+	else
+		data="--data-binary @${data_file}"
+	fi
+	unset SLURM_JWT
+	export $(scontrol token)
+	#echo "request=${request} url=${url} data=${data}"
+	#set -x
+	curl -k -s \
+		--request "${request}" \
+		${data} \
+		-H X-SLURM-USER-NAME:$(whoami) \
+		-H X-SLURM-USER-TOKEN:$SLURM_JWT \
+		-H "Content-Type: application/json" \
+		--url "${url}"
+	#set +x
+	unset SLURM_JWT
+}
+
 function run_slurmrestd()
 {
 	slurmrestd=$(which slurmrestd)
