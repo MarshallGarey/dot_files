@@ -175,34 +175,46 @@ eval "$(direnv hook bash)"
 
 function rest()
 {
-	usage="Usage: rest request url [data_file] where \"request\" = GET, POST, etc."
-	if [ $# -lt 2 ]
-	then
-		echo $usage
-		return 1
-	elif [ $# -eq 3 ]
-	then
-		data_file=$3
-	fi
+	local OPTIND d h r u v
+	local data data_file request url usage verbose
 
-	request=$1
-	url=$2
+	usage=\
+"Usage: rest -r <request> -u <url> [-d <data_file>]
+\"request\" = GET, POST, etc.
+\"url\" = path to end point
+\"data_file\" = if set, add --data-binary @<data_file> to the curl command
+"
+	# How to use getopts in a bash function:
+	# https://stackoverflow.com/a/16655341/4880288
+	while getopts 'd:hr:u:v' flag
+	do
+		case "${flag}" in
+			d) data_file="${OPTARG}" ;;
+			h) echo "${usage}"; return 1 ;;
+			r) request="${OPTARG}" ;;
+			u) url="${OPTARG}" ;;
+			v) verbose=1 ;;
+		esac
+	done
+	shift $((OPTIND-1))
+
 	if [ -z "${request}" ] || [ -z "${url}" ]
 	then
-		echo $usage
+		echo "${usage}"
 		return 1
 	fi
 
-	if [ -z ${data_file} ]
+	if [ -n "${data_file}" ]
 	then
-		data=""
-	else
 		data="--data-binary @${data_file}"
 	fi
 	unset SLURM_JWT
 	export $(scontrol token)
-	#echo "request=${request} url=${url} data=${data}"
-	#set -x
+	if [ -n "${verbose}" ]
+	then
+		echo "request=${request} url=${url} data=${data}"
+		set -x
+	fi
 	curl -k -s \
 		--request "${request}" \
 		${data} \
@@ -210,7 +222,10 @@ function rest()
 		-H X-SLURM-USER-TOKEN:$SLURM_JWT \
 		-H "Content-Type: application/json" \
 		--url "${url}"
-	#set +x
+	if [ -z "${verbose}" ]
+	then
+		set +x
+	fi
 	unset SLURM_JWT
 }
 
