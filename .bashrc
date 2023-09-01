@@ -222,7 +222,7 @@ function rest()
 		-H X-SLURM-USER-TOKEN:$SLURM_JWT \
 		-H "Content-Type: application/json" \
 		--url "${url}"
-	if [ -z "${verbose}" ]
+	if [ -n "${verbose}" ]
 	then
 		set +x
 	fi
