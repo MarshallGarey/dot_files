@@ -1,0 +1,22 @@
+# Use this when lots of testsuite temp files are bloating git status
+#testsuite/
+
+testsuite/expect/globals.*
+testsuite/expect/*.failed*
+testsuite/expect/*.in*
+testsuite/expect/*.out*
+testsuite/expect/*.prog
+testsuite/expect/regression-results/
+testsuite/expect/*.error*
+testsuite/expect/*.log*
+testsuite/expect/*.tar*
+testsuite/expect/*in*script*
+cscope.out
+cscope.files
+tags
+patches*
+*.swp*
+*.swo*
+notes
+regression.out
+Session.vim
