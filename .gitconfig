@@ -29,3 +29,5 @@
 	cmd = "gvimdiff -f -d -c 'cd $GIT_PREFIX' $REMOTE $LOCAL"
 [difftool]
 	prompt = false
+[log]
+	abbrevCommit = true
