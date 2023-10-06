@@ -1,3 +1,4 @@
+# See git-config(1)
 [user]
 	name = Marshall Garey
 	email = marshall@schedmd.com
@@ -19,6 +20,12 @@
 	# -X or --no-init - leaves the output on the screen after I quit less.
 	pager = less -FRX
 	editor = /usr/bin/vim
+	# From git-config(1)
+	# core.abbrev - Set the length object names are abbreviated to.
+	# If unspecified or unset, an appropriate value is computed based on the
+	# approximate number of packed objects in your repository.
+	# In Slurm style we want 10.
+	abbrev=10
 [pager]
 [diff]
 	tool = vimdiff
