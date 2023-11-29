@@ -113,7 +113,7 @@ set ruler
 set showmatch
 
 "Puts you in paste mode
-set pastetoggle=<F10>
+set pastetoggle=<F4>
 
 "When opening and switching buffers tab to those opened already.
 set switchbuf=useopen
