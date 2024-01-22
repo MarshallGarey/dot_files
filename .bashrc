@@ -193,9 +193,24 @@ Examples:
 rest -r GET -p localhost:8080 -u slurm/v0.0.40/jobs
 rest -r POST -p localhost:8080 -u slurm/v0.0.40/job/submit -d /path/to/job/submission.json
 rest -r GET -s \$(pwd)/slurmrestd.sock -u slurm/v0.0.40/diag
-
-Example job submission json:
 "
+	# Example job submission json file:
+	#{
+	#	"job":
+	#	{
+	#		"account": "acct1",
+	#		"argv": [],
+	#		"cpus_per_task": 1,
+	#		"current_working_directory": "/home/marshall/slurm/23.11/install/c1",
+	#		"environment":["PATH=/bin:/usr/bin/:/usr/local/bin/:/home/marshall/slurm/23.11/install/c1/bin"],
+	#		"memory_per_node": { "set": true , "number" : 128 },
+	#		"name":"restd-test",
+	#		"partition": "debug",
+	#		"time_limit": { "set" : true , "number" : 100 }
+	#	},
+	#	"script":"#!/bin/sh\n sleep 60"
+	#}
+
 	# How to use getopts in a bash function:
 	# https://stackoverflow.com/a/16655341/4880288
 	while getopts 'd:hp:r:s:u:v' flag
