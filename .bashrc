@@ -193,6 +193,8 @@ Examples:
 rest -r GET -p localhost:8080 -u slurm/v0.0.40/jobs
 rest -r POST -p localhost:8080 -u slurm/v0.0.40/job/submit -d /path/to/job/submission.json
 rest -r GET -s \$(pwd)/slurmrestd.sock -u slurm/v0.0.40/diag
+# Generate the openapi spec
+rest -r GET -s \$(pwd)/slurmrestd.sock -u openapi
 "
 	# Example job submission json file:
 	#{
