@@ -175,31 +175,62 @@ eval "$(direnv hook bash)"
 
 function rest()
 {
-	local OPTIND d h r u v
-	local data data_file request url usage verbose
+	local OPTIND d h p r s u v
+	local data data_file port request url unix_sock usage verbose
 
 	usage=\
-"Usage: rest -r <request> -u <url> [-d <data_file>]
-\"request\" = GET, POST, etc.
-\"url\" = path to end point
-\"data_file\" = if set, add --data-binary @<data_file> to the curl command
+"Usage: rest -r <request> -u <url> -p host:port or -s </path/to/slurmrestd/unix/socket> [-d <data_file>]
+
+-r, -u, and one of -p or -s are required.
+
+-r request - GET, POST, etc.
+-u url - path to end point
+-p host:port - host and port where slurmrestd is listening. This is mutually exclusive with -s.
+-s - path to the slurmrestd unix socket. This is mutually exclusive with -p.
+-d data_file - if set, add --data-binary @<data_file> to the curl command
+
+Examples:
+rest -r GET -p localhost:8080 -u slurm/v0.0.40/jobs
+rest -r POST -p localhost:8080 -u slurm/v0.0.40/job/submit -d /path/to/job/submission.json
+rest -r GET -s \$(pwd)/slurmrestd.sock -u slurm/v0.0.40/diag
+
+Example job submission json:
 "
 	# How to use getopts in a bash function:
 	# https://stackoverflow.com/a/16655341/4880288
-	while getopts 'd:hr:u:v' flag
+	while getopts 'd:hp:r:s:u:v' flag
 	do
 		case "${flag}" in
 			d) data_file="${OPTARG}" ;;
 			h) echo "${usage}"; return 1 ;;
+			p) port="${OPTARG}" ;;
 			r) request="${OPTARG}" ;;
+			s) unix_sock="${OPTARG}" ;;
 			u) url="${OPTARG}" ;;
 			v) verbose=1 ;;
 		esac
 	done
 	shift $((OPTIND-1))
 
+	if [ -n "${verbose}" ]
+	then
+		echo "type=${request} url=${url} port=${port} sock=${unix_sock} data=${data}"
+	fi
+
 	if [ -z "${request}" ] || [ -z "${url}" ]
 	then
+		echo "${usage}"
+		return 1
+	fi
+
+	if [ -n "${unix_sock}" ] && [ -n "${port}" ]
+	then
+		echo "Cannot specify both unix socket and port"
+		echo "${usage}"
+		return 1
+	elif [ -z "${unix_sock}" ] && [ -z "${port}" ]
+	then
+		echo "Must specify either unix socket or port"
 		echo "${usage}"
 		return 1
 	fi
@@ -208,20 +239,35 @@ function rest()
 	then
 		data="--data-binary @${data_file}"
 	fi
-	unset SLURM_JWT
-	export $(scontrol token)
+
 	if [ -n "${verbose}" ]
 	then
-		echo "request=${request} url=${url} data=${data}"
 		set -x
 	fi
-	curl -k -s \
-		--request "${request}" \
-		${data} \
-		-H X-SLURM-USER-NAME:$(whoami) \
-		-H X-SLURM-USER-TOKEN:$SLURM_JWT \
-		-H "Content-Type: application/json" \
-		--url "${url}"
+
+	unset SLURM_JWT
+	export $(scontrol token)
+
+	if [ -n "${port}" ]
+	then
+		curl -k -s \
+			--request "${request}" \
+			${data} \
+			-H X-SLURM-USER-NAME:$(whoami) \
+			-H X-SLURM-USER-TOKEN:$SLURM_JWT \
+			-H "Content-Type: application/json" \
+			--url "${port}/${url}"
+	else
+		curl -k -s \
+			--request "${request}" \
+			${data} \
+			-H X-SLURM-USER-NAME:$(whoami) \
+			-H X-SLURM-USER-TOKEN:$SLURM_JWT \
+			-H "Content-Type: application/json" \
+			--unix-socket "${unix_sock}" \
+			--url "http://local/${url}"
+	fi
+
 	if [ -n "${verbose}" ]
 	then
 		set +x
