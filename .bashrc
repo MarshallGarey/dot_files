@@ -280,7 +280,11 @@ Example job submission json:
 # See the slurmrestd man page for a full description of the options to
 # slurmrestd.
 # This function sets SLURMRESTD_SECURITY=disable_user_check and SLURM_JWT=1,
+# automatically passes -a rest_auth/jwt,
 # then passes all arguments directly to slurmrestd.
+#
+# Why -a rest_auth/jwt? Because loading all plugins doesn't work when slurmrestd
+# is listening on a local unix socket.
 #
 # To start slurmrestd listening on port 8080 on all network interfaces:
 # run_slurmrestd :8080
@@ -301,7 +305,7 @@ function run_slurmrestd()
 	set -x
 	export SLURMRESTD_SECURITY=disable_user_check
 	export SLURM_JWT=1
-	"${slurmrestd}" $@
+	"${slurmrestd}" -a rest_auth/jwt $@
 	unset SLURM_JWT
 	unset SLURMRESTD_SECURITY
 	set +x
