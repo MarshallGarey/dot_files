@@ -179,12 +179,12 @@ function rest()
 	local data data_file port request url unix_sock usage verbose
 
 	usage=\
-"Usage: rest -r <request> -u <url> -p host:port or -s </path/to/slurmrestd/unix/socket> [-d <data_file>]
+"Usage: rest -r request_type -u url_endpoint <-p host:port | -s /path/to/slurmrestd/unix/socket> [-d data_file]
 
 -r, -u, and one of -p or -s are required.
 
--r request - GET, POST, etc.
--u url - path to end point
+-r request_type - GET, POST, etc.
+-u url_endpoint - path to end point
 -p host:port - host and port where slurmrestd is listening. This is mutually exclusive with -s.
 -s - path to the slurmrestd unix socket. This is mutually exclusive with -p.
 -d data_file - if set, add --data-binary @<data_file> to the curl command
