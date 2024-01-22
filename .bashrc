@@ -229,12 +229,26 @@ function rest()
 	unset SLURM_JWT
 }
 
+# Usage: run_slurmrestd [slurmrestd options]
+# This function starts slurmrestd. It needs to be set in the path.
+# See the slurmrestd man page for a full description of the options to
+# slurmrestd.
+# This function sets SLURMRESTD_SECURITY=disable_user_check and SLURM_JWT=1,
+# then passes all arguments directly to slurmrestd.
+#
+# To start slurmrestd listening on port 8080 on all network interfaces:
+# run_slurmrestd :8080
+#
+# To start slurmrestd listening on a local unix socket:
+# run_slurmrestd unix:/path/to/socket/file
+#
+# I like to pass one or two v's to slurmrestd: -vv
 function run_slurmrestd()
 {
-	slurmrestd=$(which slurmrestd)
+	local slurmrestd=$(which slurmrestd)
 	if [ -z "${slurmrestd}" ]
 	then
-		echo "Cannot find slurmrestd"
+		echo "Cannot find slurmrestd. Add it to the path."
 		return -1
 	fi
 	echo "Running slurmrestd: $(${slurmrestd} -V)"
