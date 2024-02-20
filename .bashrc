@@ -139,12 +139,6 @@ export -f setups
 # My tools directory contains some useful scripts.
 export PATH=/home/marshall/tools:$PATH
 
-# OpenMPI
-# Point this to whichever version of mpi I want to use.
-export PATH=/home/marshall/mpi/openmpi/4.0.7/install/bin:$PATH
-# Part of my configure line was --enable-mpirun-prefix-by-default.
-# Without that, I would need to export LD_LIBRARY_PATH=$prefix/lib.
-
 # ccache - will replace all clang/gcc calls with the ccache ones.
 export PATH=/usr/lib/ccache:$PATH
 
@@ -152,6 +146,42 @@ export PATH=/usr/lib/ccache:$PATH
 #export SLURM_1808="/home/marshall/slurm-local/18.08/install"
 #export SLURM_1905="/home/marshall/slurm-local/19.05/install"
 #export SLURM_MASTER="/home/marshall/slurm-local/master/install"
+
+def_mpi_path="/home/marshall/mpi/openmpi/version_sym/install/bin"
+function load_openmpi()
+{
+	if [ ! -d "${def_mpi_path}" ]; then
+		echo "Did not find openmpi: ${def_mpi_path}"
+		return 1
+	fi
+	# Clear the existing mpi path from the PATH
+	# Trick learned from https://unix.stackexchange.com/a/496050/244332
+	export PATH=`echo $PATH | tr ":" "\n" | grep -v "mpi" | tr "\n" ":"`
+	# Point this to whichever version of mpi I want to use.
+	#export PATH=/home/marshall/mpi/openmpi/4.0.7/install/bin:$PATH
+	#export PATH=/home/marshall/mpi/openmpi/5.0.x/install/bin:$PATH
+	export PATH="${def_mpi_path}:$PATH"
+	# Part of my configure line was --enable-mpirun-prefix-by-default.
+	# Without that, I would need to export LD_LIBRARY_PATH=$prefix/lib.
+}
+
+function load_intelmpi()
+{
+	intelmpi_path="/home/marshall/intel/oneapi/mpi/latest/bin"
+	if [ ! -d "${intelmpi_path}" ]; then
+		echo "Did not find intelmpi: ${intelmpi_path}"
+		return 1
+	fi
+	# Clear the existing mpi path from the PATH
+	# Trick learned from https://unix.stackexchange.com/a/496050/244332
+	export PATH=`echo $PATH | tr ":" "\n" | grep -v "mpi" | tr "\n" ":"`
+	export PATH="${intelmpi_path}:$PATH"
+}
+
+# Use openmpi by default
+if [ -d "${def_mpi_path}" ]; then
+	load_openmpi
+fi
 
 function chpwd()
 {
