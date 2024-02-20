@@ -322,6 +322,14 @@ rest -r GET -s \$(pwd)/slurmrestd.sock -u openapi
 	unset SLURM_JWT
 }
 
+function run_slurmrestd()
+{
+	local slurmrestd=$(which slurmrestd)
+	local OPTIND h usage help
+
+	help=0
+	usage=\
+"
 # Usage: run_slurmrestd [slurmrestd options]
 # This function starts slurmrestd. It needs to be set in the path.
 # See the slurmrestd man page for a full description of the options to
@@ -340,15 +348,26 @@ rest -r GET -s \$(pwd)/slurmrestd.sock -u openapi
 # run_slurmrestd unix:/path/to/socket/file
 #
 # I like to pass one or two v's to slurmrestd: -vv
-function run_slurmrestd()
-{
-	local slurmrestd=$(which slurmrestd)
+"
+	while getopts 'h' flag
+	do
+		case "${flag}" in
+			h) echo "${usage}" ; help=1 ;;
+		esac
+	done
+
 	if [ -z "${slurmrestd}" ]
 	then
 		echo "Cannot find slurmrestd. Add it to the path."
 		return -1
 	fi
 	echo "Running slurmrestd: $(${slurmrestd} -V)"
+
+	if [ ${help} -eq 1 ]
+	then
+		"${slurmrestd}" -h
+		return
+	fi
 	set -x
 	export SLURMRESTD_SECURITY=disable_user_check
 	export SLURM_JWT=1
