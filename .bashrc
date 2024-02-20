@@ -394,11 +394,15 @@ export HISTTIMEFORMAT="%y-%m-%d %T "
 # See https://stackoverflow.com/questions/16828/how-do-you-do-a-case-insensitive-search-using-a-pattern-modifier-using-less/26069#26069
 # -R Maintains ANSI color sequences.
 # -I sets case-insensitive searches.
+# -i sets smart-casing searches: if all search letters are lower case, then the
+# search is case-insensitive. If any letter is capitalized, then the search is
+# case-sensitive.
 # Start less with +F (or press SHIFT+F while in less) to cause it to follow the
 # file I've opened - very useful for following logs. This is a nice alternative
 # to tail -f.
 # I can also use the .lesskey file instead of .bashrc.
-export LESS=-RI
+#export LESS="-Ri --use-color"
+export LESS="-Ri"
 
 
 ##############################################################################
