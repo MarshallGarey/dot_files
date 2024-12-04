@@ -406,6 +406,15 @@ alias cleanbuild='/home/marshall/tools/cleanbuild.sh'
 alias drainednodes="sinfo --state=drain --noheader --Format=nodelist"
 alias downednodes="sinfo --state=down --noheader --Format=nodelist"
 
+# git aliases
+alias gpl="git pull"
+alias gck="git checkout"
+alias gckm="git checkout master"
+alias glg="git log"
+alias glgo="git log --oneline --graph"
+alias gst="git status"
+alias gdf="git diff"
+
 # Attach a timestamp to commands
 export HISTTIMEFORMAT="%y-%m-%d %T "
 
