@@ -203,6 +203,15 @@ cd .
 # Hook direnv to bash
 eval "$(direnv hook bash)"
 
+# Port forward the port for jenkins testsuite in the office to my
+# localhost port 8080.
+# The old command was:
+# alias knl2-web='ssh -p 22253 marshall@lehi.schedmd.com -L 8080:192.168.1.252:80'
+# I modified it since we moved jenkins it has a new ip address.
+# To use it, first run this command (jenkins-web).
+# Then go to http://localhost:8080/qa/
+alias jenkins-web='echo "Open http://localhost:8080/qa/ in a browser after ssh connects to smd-server."; ssh smd-server -L 8080:192.168.1.211:80;'
+
 function rest()
 {
 	local OPTIND d h p r s u v
